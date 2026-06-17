@@ -1,6 +1,12 @@
-<?php 
-    include "./conexion/conexion.php";
+<?php
+@session_start();
+
+if (isset($_SESSION['nike'])) {
+    header('Location: inicio/');
+    exit;
+}
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,61 +18,62 @@
 </head>
 
 <body class="card-content #01579b light-blue darken-4">
-    <main>
+<main>
+    <div class="row">
+        <div class="input-field col s12 center">
+            <img src="./vista/img/logo.fw.png" width="200" class="circle">
+        </div>
+    </div>
+
+    <div class="container">
         <div class="row">
-            <div class="input-field col s12 center">
-                <img src="./vista/img/logo.fw.png" width="200" class="circle">
-            </div>
-        </div>
-
-        <div class="container">
-            <div class="row">
-                <div class="col s12">
-                    <div class="card z-depth-5">
-                        <div class="card-content #90caf9 blue lighten-3">
+            <div class="col s12">
+                <div class="card z-depth-5">
+                    <div class="card-content #90caf9 blue lighten-3">
                             
-                            <h1>
-                                <span class="card-title">
-                                    <center>
-                                        <a href="" class="white-text">
-                                            LOGIN DE ACCESO CARRITO DE COMPRAS
-                                        </a>
-                                    </center>
-                                </span>
-                            </h1>
+                        <h1>
+                        <span class="card-title">
+                        <center>
+                            <a href="" class="white-text">
+                                LOGIN DE ACCESO CARRITO DE COMPRAS
+                            </a>
+                        </center>
+                        </span>
+                        </h1>
 
-                            <span class="card-title">
-                                <center>
-                                    <a href="" class="black-text">Inicio de Sesión</a>
-                                </center>
-                            </span>
+                        <span class="card-title">
+                        <center>
+                            <a href="" class="black-text">Inicio de Sesión</a>
+                        </center>
+                        </span>
 
-                            <div class="input-field">
-                                <i class="material-icons prefix">perm_identity</i>
-                                <input type="text" name="usuario" id="usuario" required pattern="[A-Za-z]{8,15}" autofocus>
-                                <label for="usuario">Usuario</label>
-                            </div>
-
-                            <div class="input-field">
-                                <i class="material-icons prefix">vpn_key</i>
-                                <input type="password" name="contra" id="contra" required pattern="[A-Za-z0-9]{8,15}">
-                                <label for="contra">Contraseña</label>
-                            </div>
-
-                            <div class="input-field">
-                                <center>
-                                    <a href="#" class="link">¿Olvidó su contraseña?</a>
-                                </center>
-                            </div>
-
-                            <div class="input-field center">
-                                <button id="boton" class="btn black">Acceder</button>
-                            </div>
-
+                        <div class="input-field">
+                            <i class="material-icons prefix">perm_identity</i>
+                            <input type="text" name="usuario" id="usuario" required pattern="[A-Za-z]{8,15}" autofocus>
+                            <label for="usuario">Usuario</label>
                         </div>
-                    </div>
-                </div>	
-            </div>
-        </div>
 
+                        <div class="input-field">
+                            <i class="material-icons prefix">vpn_key</i>
+                            <input type="password" name="contra" id="contra" required pattern="[A-Za-z0-9]{8,15}">
+                            <label for="contra">Contraseña</label>
+                        </div>
+
+                        <div class="input-field">
+                        <center>
+                            <a href="#" class="link">¿Olvidó su contraseña?</a>
+                        </center>
+                        </div>
+
+                        <div class="input-field center">
+                            <button id="boton" class="btn black">Acceder</button>
+                        </div>
+
+                    </div>  
+                </div>
+            </div>	
+        </div>
+    </div>
+</main>
+</body>
 <?php include './extend/scripts.php'; ?>    

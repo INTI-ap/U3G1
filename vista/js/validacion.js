@@ -19,7 +19,7 @@ $(document).on('change', '#nick', function() {
     var nick = $(this).val();
     if (nick.length >= 8) {
         $.ajax({
-            url: '/U3G1/controlador/usuarios/validacion_nick.php',
+            url: '/U3G2/controlador/usuarios/validacion_nick.php',
             type: 'POST',
             data: { nick: nick },
             beforeSend: function() {
@@ -79,7 +79,7 @@ $(document).on('change', 'input[name="correo"]', function() {
     }
     if (correo !== '') {
         $.ajax({
-            url: '/U3G1/controlador/clientes/validacion_correo.php',
+            url: '/U3G2/controlador/clientes/validacion_correo.php',
             type: 'POST',
             data: { correo: correo },
             beforeSend: function() {
@@ -103,7 +103,7 @@ $(document).on('change', '#nombre_producto', function() {
     var nombre_producto = $(this).val();
     if (nombre_producto.length >= 8) {
         $.ajax({
-            url: '/U3G1/controlador/usuarios/validacion_producto.php',
+            url: '/U3G2/controlador/usuarios/validacion_producto.php',
             type: 'POST',
             data: { nombre_producto: nombre_producto },
             beforeSend: function() {

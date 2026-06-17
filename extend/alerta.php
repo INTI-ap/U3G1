@@ -19,7 +19,7 @@ $t = isset($_GET['t']) ? htmlentities($_GET['t']) : '';
 
 $carpetas = [
     ['home', '../inicio/'],
-    ['salir', '/U3G1/'],
+    ['salir', '/U3G2/'],
     ['us', '../controlador/usuarios/'],
     ['pe', '../controlador/perfil/'],
     ['cli', '../controlador/clientes/'],
