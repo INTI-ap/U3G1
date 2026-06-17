@@ -1,306 +1,202 @@
 <?php include "../../extend/header.php"; ?>
+
 <div class="row">
   <div class="col s12">
     <div class="card">
       <div class="card-content">
-        <span class="card-title">NUEVA VENTA</span>
-        <form id="formVenta" action="ins_venta.php" method="post">
+        <span class="card-title">ALTA DE USUARIOS</span>
+        <form class="form" action="ins_usuario.php" method="post" enctype="multipart/form-data" autocomplete="off">
           <div class="input-field">
-            <input type="text" name="fechaVenta" id="fechaVenta" class="datepicker" required>
-            <label for="fechaVenta">Fecha Venta:</label>
+            <input type="text" name="nick" required autofocus title="8-15 letras" pattern="[A-Za-z]{8,15}" id="nick">
+            <label for="nick">Nick:</label>
+          </div>
+          <div class="validation"></div>
+
+          <div class="input-field">
+            <input type="password" name="pass1" title="8-15 caracteres alfanuméricos" pattern="[A-Za-z0-9]{8,15}" id="pass1" required>
+            <label for="pass1">Contraseña:</label>
           </div>
 
           <div class="input-field">
-            <select name="cliente" id="cliente" required>
-              <option value="" disabled selected>Seleccione cliente</option>
-              <?php 
-              $cli = $con->query("SELECT idCliente, nombre, apellido FROM Cliente ORDER BY nombre"); 
-              while($c = $cli->fetch_assoc()): 
-              ?>
-                <option value="<?php echo $c['idCliente'] ?>"><?php echo $c['nombre'] . " " . $c['apellido'] ?></option>
-              <?php endwhile; ?>
+            <input type="password" title="Confirmar contraseña" pattern="[A-Za-z0-9]{8,15}" id="pass2" required>
+            <label for="pass2">Verificar contraseña:</label>
+          </div>
+
+          <div class="input-field">
+            <select name="nivel" class="browser-default" required>
+              <option value="1">USUARIO</option>
+              <option value="2">ADMINISTRADOR</option>
             </select>
-            <label>Cliente</label>
           </div>
 
           <div class="input-field">
-            <input type="text" name="descripcion" id="descripcion" required maxlength="200">
-            <label>Descripción</label>
+            <input type="text" name="nombre" title="Solo letras y espacios" id="nombre" required pattern="[A-Za-záéíóúñÁÉÍÓÚÑ\s]{2,50}">
+            <label for="nombre">Nombre completo:</label>
           </div>
-          
-          <h5>Productos</h5>
-          <div id="productos-container">
-            <div class="producto-row card-panel grey lighten-5">
-              <div class="row" style="margin-bottom: 0;">
-                <div class="col s12 m5">
-                  <select name="producto[]" class="producto-select" required>
-                    <option value="" disabled selected>Seleccione producto</option>
-                    <?php 
-                    $prod = $con->query("SELECT idProducto, nombre, precio, stock FROM Producto WHERE estado = 'activo' AND stock > 0 ORDER BY nombre"); 
-                    while($p = $prod->fetch_assoc()): 
-                    ?>
-                      <option value="<?php echo $p['idProducto'] ?>" 
-                              data-precio="<?php echo $p['precio'] ?>" 
-                              data-stock="<?php echo $p['stock'] ?>"
-                              data-nombre="<?php echo htmlspecialchars($p['nombre']) ?>">
-                        <?php echo htmlspecialchars($p['nombre']) ?> - $<?php echo number_format($p['precio'],2) ?> (stock: <?php echo $p['stock'] ?>)
-                      </option>
-                    <?php endwhile; ?>
-                  </select>
-                </div>
-                <div class="col s12 m3">
-                  <input type="number" name="cantidad[]" class="cantidad" placeholder="Cantidad" min="1" required>
-                </div>
-                <div class="col s12 m3">
-                  <input type="number" step="0.01" name="descuento[]" class="descuento" placeholder="Descuento" value="0" min="0">
-                </div>
-                <div class="col s12 m1">
-                  <button type="button" class="btn red remove-row" style="width:100%;">
-                    <i class="material-icons">remove</i>
-                  </button>
-                </div>
-              </div>
-              <div class="row" style="margin-top: 10px; margin-bottom: 0;">
-                <div class="col s12">
-                  <small class="subtotal-text grey-text">Subtotal: $0.00</small>
-                  <small class="stock-info grey-text" style="margin-left: 15px;"></small>
-                </div>
-              </div>
+
+          <div class="input-field">
+            <input type="email" name="correo" title="Correo electrónico" id="correo">
+            <label for="correo">Correo electrónico:</label>
+          </div>
+
+          <div class="file-field input-field">
+            <div class="btn">
+              <span>Foto</span>
+              <input type="file" name="foto" accept="image/png,image/jpeg">
+            </div>
+            <div class="file-path-wrapper">
+              <input class="file-path validate" type="text" placeholder="Seleccione una imagen">
             </div>
           </div>
-          
-          <button type="button" id="add-producto" class="btn green waves-effect waves-light">
-            <i class="material-icons left">add</i>Agregar producto
-          </button>
-          
-          <!-- Resumen de venta (corregido) -->
-          <div class="card-panel blue lighten-5" style="margin-top: 20px;">
-            <h5>Resumen de venta</h5>
-            <p><strong>Subtotal:</strong> $<span id="subtotal">0.00</span></p>
-            <p><strong>Descuento total:</strong> $<span id="descuento-total">0.00</span></p>
-            <p><strong>Total a pagar:</strong> $<span id="total-pagar">0.00</span></p>
-          </div>
-          
-          <button type="submit" class="btn blue waves-effect waves-light" id="btn_registrar" disabled>
-            <i class="material-icons left">attach_money</i>Registrar Venta
-          </button>
+
+          <button type="submit" class="btn black" id="btn_guardar">Guardar <i class="material-icons">send</i></button>
         </form>
       </div>
     </div>
   </div>
 </div>
 
+<!-- Barra de búsqueda -->
+<div class="row">
+  <div class="col s12">
+    <nav class="brown lighten-3">
+      <div class="nav-wrapper">
+        <div class="input-field">
+          <input type="search" id="buscarU" autocomplete="off" placeholder="Buscar por nick, nombre o correo...">
+          <label for="buscarU"><i class="material-icons">search</i></label>
+          <i class="material-icons" id="clear-searchU" style="cursor: pointer;">close</i>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<?php 
+$sel = $con->query("SELECT * FROM usuario");
+$row = mysqli_num_rows($sel);
+?>
 <div class="row">
   <div class="col s12">
     <div class="card">
       <div class="card-content">
-        <span class="card-title">LISTADO DE VENTAS</span>
-        <table class="striped responsive-table">
-          <thead>
-            <tr><th>ID</th><th>Fecha</th><th>Cliente</th><th>Descripción</th><th>Total</th><th>Detalle</th><th>Eliminar</th></tr>
-          </thead>
-          <tbody>
-          <?php
-          $ventas = $con->query("SELECT V.idVenta, V.fechaVenta, V.descripcion, C.nombre, C.apellido, 
-          SUM(D.cantidad * P.precio - D.descuento) as total FROM Venta V 
-          JOIN Cliente C ON V.Cliente_idCliente = C.idCliente 
-          JOIN DetalleVenta D ON V.idVenta = D.Venta_idVenta 
-          JOIN Producto P ON D.Producto_idProducto = P.idProducto 
-          GROUP BY V.idVenta ORDER BY V.idVenta DESC");
-          if($ventas->num_rows == 0):
-          ?>
-            <tr><td colspan="7" class="center-align">No hay ventas registradas</td></tr>
-          <?php else: while($v = $ventas->fetch_assoc()): ?>
-            <tr>
-              <td><?php echo $v['idVenta'] ?></td>
-              <td><?php echo $v['fechaVenta'] ?></td>
-              <td><?php echo $v['nombre'] . " " . $v['apellido'] ?></td>
-              <td><?php echo htmlspecialchars($v['descripcion']) ?></td>
-              <td>$<?php echo number_format($v['total'],2) ?></td>
-              <td><a href="detalle_venta.php?id=<?php echo $v['idVenta'] ?>" class="btn-floating blue"><i class="material-icons">visibility</i></a></td>
-              <td><a href="#" class="btn-floating red" onclick="eliminarVenta(<?php echo $v['idVenta'] ?>)"><i class="material-icons">delete</i></a></td>
-            </tr>
-          <?php endwhile; endif; ?>
-          </tbody>
-        </table>
+        <span class="card-title">Usuarios (<span id="total-usuarios"><?php echo $row ?></span>) 
+          <span id="resultado-busquedaU" style="font-size: 14px; color: #666;"></span>
+        </span>
+        <div class="responsive-table">
+          <table class="striped" id="tabla-usuarios">
+            <thead>
+              <tr>
+                <th>Nick</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Nivel</th>
+                <th>Editar</th>
+                <th>Foto</th>
+                <th>Bloqueo</th>
+                <th>Eliminar</th>
+              </tr>
+            </thead>
+            <tbody>
+            <?php while($f = $sel->fetch_assoc()): ?>
+              <tr class="usuario-row" data-id="<?php echo $f['idUsuario'] ?>">
+                <td><?php echo htmlspecialchars($f['nick']) ?></td>
+                <td><?php echo htmlspecialchars($f['nombre']) ?></td>
+                <td><?php echo htmlspecialchars($f['correo']) ?></td>
+                <td><?php echo ($f['nivel'] == 1) ? 'USUARIO' : 'ADMINISTRADOR' ?></td>
+                <!-- Botón Editar que redirige a edit_usuario.php -->
+                <td><a href="edit_usuario.php?id=<?php echo $f['idUsuario'] ?>" class="btn-floating btn-small blue"><i class="material-icons">edit</i></a></td>
+                <td><img src="<?php echo $f['foto'] ?>" width="50" height="50" class="circle" style="object-fit: cover;"></td>
+                <td>
+                  <?php if ($f['bloqueo'] == 1): ?>
+                    <a href="bloqueo_manual.php?us=<?php echo $f['idUsuario'] ?>&bl=<?php echo $f['bloqueo'] ?>" class="btn-floating btn-small green">
+                      <i class="material-icons">lock_open</i>
+                    </a>
+                  <?php else: ?>
+                    <a href="bloqueo_manual.php?us=<?php echo $f['idUsuario'] ?>&bl=<?php echo $f['bloqueo'] ?>" class="btn-floating btn-small red">
+                      <i class="material-icons">lock_outline</i>
+                    </a>
+                  <?php endif; ?>
+                </td>
+                <td>
+                  <a href="#" class="btn-floating btn-small red" 
+                  onclick="swal({ title: '¿Está seguro que desea eliminar al usuario?', 
+                  text: '¡Al eliminarlo no podrá recuperarlo!', 
+                  type: 'warning', showCancelButton: true, 
+                  confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', 
+                  confirmButtonText: 'Sí, eliminarlo!' }).then(function () 
+                  { location.href='eliminar_usuario.php?id=<?php echo $f['idUsuario'] ?>'; })">
+                    <i class="material-icons">clear</i>
+                  </a>
+                </td>
+              </tr>
+            <?php endwhile; ?>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-// Función para eliminar venta
-function eliminarVenta(id) {
-  Swal.fire({
-    title: '¿Eliminar venta?',
-    text: 'Se eliminarán todos los detalles asociados',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      location.href = 'eliminar_venta.php?id=' + id;
-    }
-  });
-}
-
-// Calcular totales de la venta (actualiza el resumen)
-function calcularTotales() {
-  var subtotal = 0;
-  var descuentoTotal = 0;
-  
-  $('.producto-row').each(function() {
-    var select = $(this).find('.producto-select');
-    var precio = parseFloat(select.find('option:selected').data('precio')) || 0;
-    var cantidad = parseInt($(this).find('.cantidad').val()) || 0;
-    var descuento = parseFloat($(this).find('.descuento').val()) || 0;
-    
-    var totalProducto = precio * cantidad;
-    subtotal += totalProducto;
-    descuentoTotal += descuento;
-    
-    var subtotalProducto = totalProducto - descuento;
-    $(this).find('.subtotal-text').text('Subtotal: $' + subtotalProducto.toFixed(2));
-  });
-  
-  var totalPagar = subtotal - descuentoTotal;
-  $('#subtotal').text(subtotal.toFixed(2));
-  $('#descuento-total').text(descuentoTotal.toFixed(2));
-  $('#total-pagar').text(totalPagar.toFixed(2));
-  
-  // Habilitar botón solo si hay productos seleccionados y cliente seleccionado
-  var productosSeleccionados = false;
-  $('.producto-select').each(function() {
-    if($(this).val()) productosSeleccionados = true;
-  });
-  
-  $('#btn_registrar').prop('disabled', !productosSeleccionados || !$('#cliente').val());
-}
-
-// Actualizar stock disponible al cambiar producto
-function actualizarStockDisponible(select) {
-  var row = select.closest('.producto-row');
-  var stock = select.find('option:selected').data('stock') || 0;
-  var cantidad = row.find('.cantidad').val() || 1;
-  var stockInfo = row.find('.stock-info');
-  
-  if(stockInfo.length) {
-    if(cantidad > stock) {
-      stockInfo.css('color', 'red');
-      stockInfo.html('<i class="material-icons tiny" style="font-size: 12px;">warning</i> Stock insuficiente (disponible: ' + stock + ')');
-      row.find('.cantidad').addClass('invalid');
-    } else {
-      stockInfo.css('color', '#9e9e9e');
-      stockInfo.text('Stock disponible: ' + stock);
-      row.find('.cantidad').removeClass('invalid');
-    }
-  }
-}
-
 $(document).ready(function(){
-  // Inicializar componentes
-  $('select').formSelect();
-  $('.datepicker').datepicker({
-    format: 'dd/mm/yyyy',
-    defaultDate: new Date(),
-    setDefaultDate: true
-  });
-  
-  // Agregar producto
-  $('#add-producto').click(function(){
-    var clone = $('.producto-row:first').clone();
-    clone.find('select').val('').formSelect();
-    clone.find('.cantidad').val('');
-    clone.find('.descuento').val('0');
-    clone.find('.subtotal-text').text('Subtotal: $0.00');
-    clone.find('.stock-info').text('');
-    clone.find('.cantidad').removeClass('invalid');
-    $('#productos-container').append(clone);
-    calcularTotales();
-  });
-  
-  // Eliminar producto
-  $(document).on('click', '.remove-row', function(){ 
-    if($('.producto-row').length > 1) {
-      $(this).closest('.producto-row').remove();
-      calcularTotales();
-    } else {
-      Swal.fire('Atención', 'Debe haber al menos un producto', 'warning');
-    }
-  });
-  
-  // Validar cantidad vs stock
-  $(document).on('change keyup', '.cantidad', function() {
-    var row = $(this).closest('.producto-row');
-    var stock = row.find('.producto-select option:selected').data('stock') || 0;
-    var cantidad = parseInt($(this).val()) || 0;
-    
-    if(cantidad > stock) {
-      Swal.fire('Error', 'La cantidad no puede superar el stock disponible (' + stock + ')', 'error');
-      $(this).val(stock);
-      cantidad = stock;
-    }
-    if(cantidad < 1) $(this).val(1);
-    calcularTotales();
-    actualizarStockDisponible(row.find('.producto-select'));
-  });
-  
-  // Cambio de producto
-  $(document).on('change', '.producto-select', function() {
-    var row = $(this).closest('.producto-row');
-    row.find('.cantidad').val(1);
-    actualizarStockDisponible($(this));
-    calcularTotales();
-  });
-  
-  // Cambio de descuento
-  $(document).on('change keyup', '.descuento', function() {
-    var descuento = parseFloat($(this).val()) || 0;
-    if(descuento < 0) $(this).val(0);
-    calcularTotales();
-  });
-  
-  // Cambio de cliente
-  $('#cliente').change(function() {
-    calcularTotales();
-  });
-  
-  // Validar formulario antes de enviar
-  $('#formVenta').submit(function(e) {
-    var tieneProductos = false;
-    var stockValido = true;
-    
-    $('.producto-row').each(function() {
-      var producto = $(this).find('.producto-select').val();
-      var cantidad = parseInt($(this).find('.cantidad').val()) || 0;
-      var stock = $(this).find('.producto-select option:selected').data('stock') || 0;
-      
-      if(producto) {
-        tieneProductos = true;
-        if(cantidad > stock) {
-          stockValido = false;
-          Swal.fire('Error', 'La cantidad de un producto supera el stock disponible', 'error');
-          return false;
+  // Validación de nick duplicado
+  $('#nick').change(function() {
+    var nick = $(this).val();
+    if(nick.length >= 8) {
+      $.ajax({
+        url: 'validacion_nick.php',
+        type: 'POST',
+        data: { nick: nick },
+        beforeSend: function() {
+          $('.validation').html('<span class="blue-text">Verificando nick...</span>');
+        },
+        success: function(resp) {
+          $('.validation').html(resp);
+          if(resp.indexOf('disponible') !== -1) {
+            $('#btn_guardar').show();
+          } else {
+            $('#btn_guardar').hide();
+          }
+        },
+        error: function() {
+          $('.validation').html('<span class="red-text">Error en validación</span>');
         }
-      }
-    });
-    
-    if(!tieneProductos) {
-      e.preventDefault();
-      Swal.fire('Error', 'Debe agregar al menos un producto', 'error');
-    } else if(!stockValido) {
-      e.preventDefault();
+      });
+    } else {
+      $('.validation').html('<span class="orange-text">El nick debe tener al menos 8 caracteres</span>');
+      $('#btn_guardar').hide();
     }
   });
-  
-  calcularTotales();
+
+  // Validación de contraseñas
+  $('#btn_guardar').hide();
+  $('#pass2').change(function() {
+    if ($('#pass1').val() == $('#pass2').val()) {
+      swal('Bien hecho', 'Las contraseñas coinciden', 'success');
+      $('#btn_guardar').show();
+    } else {
+      swal('Error', 'Las contraseñas no coinciden', 'error');
+      $('#btn_guardar').hide();
+    }
+  });
+
+  // Prevenir envío con Enter
+  $('.form').keypress(function(e) {
+    if (e.which == 13) return false;
+  });
 });
 
-$('<style>.producto-row { margin-bottom: 15px; } .remove-row { margin-top: 5px; }</style>').appendTo('head');
+// Función para convertir texto a mayúsculas
+function may(valor, id) {
+  if (id === 'nombre') {
+    document.getElementById(id).value = valor.toUpperCase();
+  }
+}
 </script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.3.2/sweetalert2.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.3.2/sweetalert2.js"></script>
 
 <?php include '../../extend/scripts.php'; ?>
 </body>
